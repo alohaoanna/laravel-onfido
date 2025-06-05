@@ -39,16 +39,7 @@ class OnfidoServiceProvider extends PackageServiceProvider
                     ->startWith(function (InstallCommand $command) {
                         $command->info("laravel-onfido package is installing...");
                     })
-                    ->publishConfigFile();
-
-                $result = $command->ask("Do you want to publish migrations? [yes/no]", "no");
-
-                if (strtolower($result) == "yes") {
-                    $command->publishMigrations()
-                        ->askToRunMigrations();
-                }
-
-                $command
+                    ->publishConfigFile()
                     ->copyAndRegisterServiceProviderInApp()
                     ->endWith(function (InstallCommand $command) {
                         $command->info("Thanks for using laravel-onfido package!");
