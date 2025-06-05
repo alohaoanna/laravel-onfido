@@ -37,7 +37,7 @@ class User extends \Illuminate\Database\Eloquent\Model
 
 This will give you access to a lot of methods provided in the trait.
 
-But the more important is the `startVerification(Region $region, $attributes = [], $workflowId = null)` one
+But the more important is the `startVerification(Region|null $region = null, $attributes = [], $workflowId = null)` one
 
 When user start a verification. Call this method on the model instance.
 
