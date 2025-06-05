@@ -24,11 +24,15 @@ class Portal
     public function __construct($configuration = null)
     {
         $this->configuration = $configuration ?? Configuration::getDefaultConfiguration();
+
+        $this->configuration->setApiToken(config('onfido.api.token'));
+
         $this->client = new Client([
             'timeout' => config('onfido.api.timeout.default', 30),
             'connect_timeout' => config('onfido.api.timeout.connect', 30),
             'read_timeout' => config('onfido.api.timeout.read', 30),
         ]);
+
         $this->api = new DefaultApi(
             $this->client,
             $this->configuration,

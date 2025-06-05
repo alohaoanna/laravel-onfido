@@ -35,15 +35,14 @@ trait Verifiable
     /**
      * Start a now flow for verification
      *
-     * @param Region|null $region
+     * @param $region
      * @param array $attributes
      * @param $workflow
-     * @param mixed $redirection Set it to false if you don't want to redirect user
-     * @return Application|Redirector|RedirectResponse|array|null
+     * @return array|null
      * @throws ApiException
      * @throws Throwable
      */
-    public function startVerification(Region|null $region = null, $attributes = [], $workflow = null, $redirection = null): Application|Redirector|RedirectResponse|array|null
+    public function startVerification($region = null, $attributes = [], $workflow = null): array|null
     {
         $repository = new OnfidoRepository($this);
 
@@ -55,7 +54,7 @@ trait Verifiable
             $attributes = $this->getOnfidoAttributes();
         }
 
-        return $repository->startVerification($region, $attributes, $workflow, $redirection);
+        return $repository->startVerification($region, $attributes, $workflow);
     }
 
     /**
@@ -97,7 +96,8 @@ trait Verifiable
 
     public function createOnfidoInstance($attributes = [])
     {
-        return OnfidoInstance::create(array_merge($attributes, [
+        $class = app('onfido')->getModel();
+        return $class::create(array_merge($attributes, [
             'model_id' => $this->id,
             'model_type' => $this::class,
         ]));

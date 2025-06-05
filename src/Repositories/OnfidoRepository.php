@@ -8,6 +8,7 @@ use Illuminate\Routing\Redirector;
 use OANNA\Onfido\Api\Portal;
 use OANNA\Onfido\Models\OnfidoInstance;
 use Onfido\ApiException;
+use Onfido\Model\WorkflowRun;
 use Onfido\Region;
 use Throwable;
 
@@ -25,22 +26,19 @@ class OnfidoRepository
     /**
      * Start a verification flow
      *
-     * @param Region|null $region
+     * @param $region
      * @param array $attributes
      * @param null $workflow
-     * @param mixed $redirection Set it to false if you don't want to redirect user
-     * @return Application|Redirector|RedirectResponse|array|null
+     * @return array|null
      * @throws ApiException
      * @throws Throwable
      */
-    public function startVerification(Region|null $region, $attributes = [], $workflow = null, $redirection = null): Application|Redirector|RedirectResponse|array|null
+    public function startVerification($region, $attributes = [], $workflow = null): array|null
     {
         throw_if(empty($region), "Provide a valid region.");
 
         $applicant = $workflowRun = $sdkToken = null;
-        $portal = Portal::initialize()
-            ->setApiToken(config('onfido.api.token'))
-            ->setRegion($region);
+        $portal = Portal::initialize()->setRegion($region);
 
         if (empty($this->onfido)) {
             if (!empty($model)) {
@@ -49,10 +47,13 @@ class OnfidoRepository
                     'verification_started_at' => now(),
                 ]);
             }
-            else $this->onfido = OnfidoInstance::create([
-                'started' => true,
-                'verification_started_at' => now(),
-            ]);
+            else {
+                $class = app('onfido')->getModel();
+                $this->onfido = $class::create([
+                    'started' => true,
+                    'verification_started_at' => now(),
+                ]);
+            }
         }
         else {
             $applicant = $this->onfido->applicant_id;
@@ -89,21 +90,11 @@ class OnfidoRepository
             'sdk_token' => $sdkToken,
         ]);
 
-        if (config('onfido.livewire', true)) {
-            $component = app('livewire')->current();
-            if ($component) {
-                $component->disaptch('onfido.verification.start');
-            }
-        }
-
-        $redirection = is_null($redirection) ? config('onfido.redirection', true) : false;
-        if ($redirection === false || $redirection === null) {
-            return ['onfido_instance_id' => $this->onfido->id, 'applicant_id' => $applicant, 'workflow_run_id' => $workflowRun, 'sdkToken' => $sdkToken];
-        }
-        else if (is_string($redirection)) {
-            return redirect(route($redirection, ['onfido_instance_id' => $this->onfido->id, 'applicant_id' => $applicant, 'workflow_run_id' => $workflowRun, 'sdkToken' => $sdkToken]));
-        }
-
-        return redirect(route('onfido.verification', ['onfido_instance_id' => $this->onfido->id, 'applicant_id' => $applicant, 'workflow_run_id' => $workflowRun, 'sdkToken' => $sdkToken]));
+        return [
+            'applicant_id' => $applicant,
+            'workflow_id' => $workflow,
+            'workflow_run_id' => $workflowRun,
+            'sdk_token' => $sdkToken,
+        ];
     }
 }

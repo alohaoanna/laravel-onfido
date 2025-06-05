@@ -2,35 +2,31 @@
 
 namespace OANNA\Onfido;
 
-use function Livewire\on;
+use OANNA\Onfido\Models\OnfidoInstance;
 
 class OnfidoManager
 {
-    public $hasRenderedAssets = false;
+    private string $model = OnfidoInstance::class;
 
-    public function boot()
-    {
-        on('flush-state', function () {
-           $this->hasRenderedAssets = false;
-        });
-    }
+    public $hasRenderedAssets = false;
 
     public function markAssetsRendered()
     {
         $this->hasRenderedAssets = true;
     }
 
-    public function scripts($options = [])
+    public static function registerOnfidoModel(string $model): void
     {
-        $this->markAssetsRendered();
-
-        return AssetManager::scripts($options);
+        app('onfido')->setModel($model);
     }
 
-    public function assets($options = [])
+    public function setModel(string $model)
     {
-        $this->markAssetsRendered();
+        $this->model = $class;
+    }
 
-        return AssetManager::assets($options);
+    public function getModel(): string
+    {
+        return $this->model;
     }
 }

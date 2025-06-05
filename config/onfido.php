@@ -3,48 +3,6 @@
 // config for OANNA/Onfido
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Redirection
-    |--------------------------------------------------------------------------
-    |
-    | Define here the type of redirection for the startWorkflow method in the Verifiable trait.
-    | Expected value:
-    | true           => If true is set, it will redirect to the default page of verification
-    | 'my.own.route' => Provide your own verification route by setting the route name
-    | false|null     => If false or null is set, it will not redirect the user to another route.
-    |                   Set it if you verified the user via another way than a route.
-    |
-    */
-
-    'redirection' => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire
-    |--------------------------------------------------------------------------
-    |
-    | Set true if you use livewire in your project. This will dispatch event.
-    |
-    */
-
-    'livewire' => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Web SDK
-    |--------------------------------------------------------------------------
-    |
-    | Set the Web SDK version to use in cdn import
-    |
-    */
-
-    'sdk' => [
-
-        'version' => '14.46.1',
-
-    ],
-
     'dataset' => [
 
         /*
