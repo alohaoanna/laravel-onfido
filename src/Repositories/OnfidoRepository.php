@@ -2,14 +2,8 @@
 
 namespace OANNA\Onfido\Repositories;
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 use OANNA\Onfido\Api\Portal;
-use OANNA\Onfido\Models\OnfidoInstance;
 use Onfido\ApiException;
-use Onfido\Model\WorkflowRun;
-use Onfido\Region;
 use Throwable;
 
 class OnfidoRepository

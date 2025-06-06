@@ -138,7 +138,7 @@ class Portal
     public function execute($fallback): mixed
     {
         try {
-            $fallback();
+            return $fallback();
         }
         catch (ApiException $e) {
             if (app()->environment('local')) {

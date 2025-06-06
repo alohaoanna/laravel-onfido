@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Foundation\Application;
 
 /**
- * @property OnfidoInstance|null $onfidoInstance
+ * @property object|null $onfidoInstance
  * @property-read string|null $applicant_id
  * @property-read string|null $workflow_run_id
  * @property-read bool $started
@@ -123,24 +123,33 @@ trait Verifiable
         return $this->onfidoInstance?->isWaitingApproval() ?? false;
     }
 
-    public function __get(string $name)
+    public function getApplicantIdAttribute()
     {
-        $onfidoInstance = $this->onfidoInstance;
-        switch (Str::snake($name)) {
-            case 'applicant_id':
-                return $onfidoInstance?->applicant_id;
-            case 'workflow_run_id':
-                return $onfidoInstance?->workflow_run_id;
-            case 'started':
-                return $onfidoInstance?->started;
-            case 'verified':
-                return $onfidoInstance?->verified;
-            case 'verification_started_at':
-                return $onfidoInstance?->verification_started_at;
-            case 'verified_at':
-                return $onfidoInstance?->verified_at;
-            default:
-                parent::__get($name);
-        }
+        return $this->onfidoInstance?->applicant_id;
+    }
+
+    public function getWorkflowRunIdAttribute()
+    {
+        return $this->onfidoInstance?->workflow_run_id;
+    }
+
+    public function getStartedAttribute()
+    {
+        return $this->onfidoInstance?->started;
+    }
+
+    public function getVerifiedAttribute()
+    {
+        return $this->onfidoInstance?->verified;
+    }
+
+    public function getVerificationStartedAtAttribute()
+    {
+        return $this->onfidoInstance?->verification_started_at;
+    }
+
+    public function getVerifiedAtAttribute()
+    {
+        return $this->onfidoInstance?->verified_at;
     }
 }
