@@ -3,6 +3,7 @@
 namespace OANNA\Onfido\Traits;
 
 
+use OANNA\Onfido\Enums\Status;
 use OANNA\Onfido\Repositories\OnfidoRepository;
 use Throwable;
 use Carbon\Carbon;
@@ -11,13 +12,10 @@ use Onfido\ApiException;
 use Onfido\Model\WorkflowRun;
 use OANNA\Onfido\Api\Portal;
 use OANNA\Onfido\Models\OnfidoInstance;
-use Illuminate\Support\Str;
-use Illuminate\Routing\Redirector;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Foundation\Application;
 
 /**
  * @property object|null $onfidoInstance
+ * @property-read Status|null $status
  * @property-read string|null $applicant_id
  * @property-read string|null $workflow_run_id
  * @property-read bool $started
@@ -44,8 +42,6 @@ trait Verifiable
      */
     public function startVerification($region = null, $attributes = [], $workflow = null): array|null
     {
-        $repository = new OnfidoRepository($this);
-
         if (empty($region) && method_exists($this, 'getRegion')) {
             $region = $this->getRegion();
         }
@@ -54,7 +50,7 @@ trait Verifiable
             $attributes = $this->getOnfidoAttributes();
         }
 
-        return $repository->startVerification($region, $attributes, $workflow);
+        return (new OnfidoRepository($this))->startVerification($region, $attributes, $workflow);
     }
 
     /**
@@ -77,7 +73,6 @@ trait Verifiable
         }
 
         $workflowRun = Portal::initialize()
-            ->setApiToken(config('onfido.api.token'))
             ->setRegion($region)
             ->createWorkflowRun($onfidoinstance->applicant_id, $workflow);
 
@@ -123,6 +118,11 @@ trait Verifiable
         return $this->onfidoInstance?->isWaitingApproval() ?? false;
     }
 
+    public function getStatusAttribute()
+    {
+        return $this->onfidoInstance?->status;
+    }
+
     public function getApplicantIdAttribute()
     {
         return $this->onfidoInstance?->applicant_id;
@@ -143,9 +143,9 @@ trait Verifiable
         return $this->onfidoInstance?->verified;
     }
 
-    public function getVerificationStartedAtAttribute()
+    public function getStartedAtAttribute()
     {
-        return $this->onfidoInstance?->verification_started_at;
+        return $this->onfidoInstance?->started_at;
     }
 
     public function getVerifiedAtAttribute()

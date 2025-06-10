@@ -25,13 +25,10 @@ class Portal
     {
         $this->configuration = $configuration ?? Configuration::getDefaultConfiguration();
 
-        $this->configuration->setApiToken(config('onfido.api.token'));
+        $this->configuration->setApiToken(config('onfido.api.token'))
+            ->setRegion(config('onfido.api.region'));
 
-        $this->client = new Client([
-            'timeout' => config('onfido.api.timeout.default', 30),
-            'connect_timeout' => config('onfido.api.timeout.connect', 30),
-            'read_timeout' => config('onfido.api.timeout.read', 30),
-        ]);
+        $this->client = self::getDefaultClient();
 
         $this->api = new DefaultApi(
             $this->client,
@@ -59,14 +56,24 @@ class Portal
     public function setApi($client = null): self
     {
         $this->api = new DefaultApi(
-            $client ?? new Client([
-                'timeout' => config('onfido.api.timeout.default', 30),
-                'connect_timeout' => config('onfido.api.timeout.connect', 30),
-                'read_timeout' => config('onfido.api.timeout.read', 30),
-            ]),
+            $client ?? self::getDefaultClient(),
             $this->configuration,
         );
         return $this;
+    }
+
+    public function getConfiguration(): Configuration
+    {
+        return $this->configuration;
+    }
+
+    public static function getDefaultClient($timeout = null, $connect_timeout = null, $read_timeout = null): Client
+    {
+        return new Client([
+            'timeout' => $timeout ?? config('onfido.api.timeout.default', 30),
+            'connect_timeout' => $connect_timeout ?? config('onfido.api.timeout.connect', 30),
+            'read_timeout' => $read_timeout ?? config('onfido.api.timeout.read', 30),
+        ]);
     }
 
     /**

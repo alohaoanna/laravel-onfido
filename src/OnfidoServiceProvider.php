@@ -32,7 +32,8 @@ class OnfidoServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-onfido')
             ->hasConfigFile()
-            ->hasMigration('create_onfido_informations_table')
+            ->hasMigration('create_onfido_instances_table')
+            ->runsMigrations()
             ->hasCommand(OnfidoCommand::class)
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
@@ -40,6 +41,8 @@ class OnfidoServiceProvider extends PackageServiceProvider
                         $command->info("laravel-onfido package is installing...");
                     })
                     ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToRunMigrations()
                     ->copyAndRegisterServiceProviderInApp()
                     ->endWith(function (InstallCommand $command) {
                         $command->info("Thanks for using laravel-onfido package!");

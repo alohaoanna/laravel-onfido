@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('workflow_id')->nullable();
             $table->string('sdk_token')->nullable();
             $table->boolean('started')->nullable();
-            $table->timestamp('verification_started_at')->nullable();
+            $table->timestamp('started_at')->nullable();
             $table->boolean('verified')->nullable()->default(false);
             $table->timestamp('verified_at')->nullable();
             $table->timestamps();

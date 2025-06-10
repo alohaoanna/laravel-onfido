@@ -66,6 +66,17 @@ return [
         */
 
         'token' => env('ONFIDO_API_TOKEN', 'ONFIDO_API_TOKEN'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | ONFIDO API DEFAULT REGION
+        |--------------------------------------------------------------------------
+        |
+        | Provide your default API Region. You can manually set a new region if needed when you make calls.
+        |
+        */
+
+        'region' => \Onfido\Region::EU,
     ],
 
     'database' => [

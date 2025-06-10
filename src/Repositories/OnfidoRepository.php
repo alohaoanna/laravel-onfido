@@ -11,7 +11,7 @@ class OnfidoRepository
     private $model;
     private $onfido;
 
-    public function __construct($model = null)
+    public function __construct($model)
     {
         $this->model = $model;
         $this->onfido = $model?->onfidoInstance;
@@ -29,31 +29,22 @@ class OnfidoRepository
      */
     public function startVerification($region, $attributes = [], $workflow = null): array|null
     {
-        throw_if(empty($region), "Provide a valid region.");
+        throw_if(empty($this->model), new \Exception("No model provided."));
 
-        $applicant = $workflowRun = $sdkToken = null;
+        throw_if(empty($region), new \Exception("Provide a valid region."));
+
         $portal = Portal::initialize()->setRegion($region);
 
         if (empty($this->onfido)) {
-            if (!empty($model)) {
-                $this->onfido = $this->model->createOnfidoInstance([
-                    'started' => true,
-                    'verification_started_at' => now(),
-                ]);
-            }
-            else {
-                $class = app('onfido')->getModel();
-                $this->onfido = $class::create([
-                    'started' => true,
-                    'verification_started_at' => now(),
-                ]);
-            }
+            $this->onfido = $this->model->createOnfidoInstance([
+                'started' => true,
+                'started_at' => now(),
+            ]);
         }
-        else {
-            $applicant = $this->onfido->applicant_id;
-            $workflowRun = $this->onfido->workflow_run_id;
-            $sdkToken = $this->onfido->sdk_token;
-        }
+
+        $applicant = $this->onfido->applicant_id ?? null;
+        $workflowRun = $this->onfido->workflow_run_id ?? null;
+        $sdkToken = $this->onfido->sdk_token ?? null;
 
         if (empty($applicant)) {
             $applicant = $portal->createApplicant($attributes);
