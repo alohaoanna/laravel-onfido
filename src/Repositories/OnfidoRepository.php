@@ -2,7 +2,9 @@
 
 namespace OANNA\Onfido\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use OANNA\Onfido\Api\Portal;
+use OANNA\Onfido\Traits\Verifiable;
 use Onfido\ApiException;
 use Throwable;
 
@@ -11,10 +13,12 @@ class OnfidoRepository
     private $model;
     private $onfido;
 
-    public function __construct($model)
+    public function __construct($model, $onfidoInstance = null)
     {
         $this->model = $model;
-        $this->onfido = $model?->onfidoInstance;
+        $this->onfido = $onfidoInstance ?? $model?->onfidoInstance ?? null;
+
+        throw_if(! is_a($this->model, Model::class), new \Exception("Invalid model, please provide a model class who use the ".Verifiable::class." trait."));
     }
 
     /**
@@ -29,8 +33,6 @@ class OnfidoRepository
      */
     public function startVerification($region, $attributes = [], $workflow = null): array|null
     {
-        throw_if(empty($this->model), new \Exception("No model provided."));
-
         throw_if(empty($region), new \Exception("Provide a valid region."));
 
         $portal = Portal::initialize()->setRegion($region);
@@ -40,6 +42,9 @@ class OnfidoRepository
                 'started' => true,
                 'started_at' => now(),
             ]);
+        }
+        else {
+            $this->onfido->startNow();
         }
 
         $applicant = $this->onfido->applicant_id ?? null;

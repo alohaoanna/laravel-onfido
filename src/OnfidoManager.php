@@ -22,7 +22,7 @@ class OnfidoManager
 
     public function setModel(string $model)
     {
-        $this->model = $class;
+        $this->model = $model;
     }
 
     public function getModel(): string
