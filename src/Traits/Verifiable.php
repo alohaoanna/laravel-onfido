@@ -152,4 +152,29 @@ trait Verifiable
     {
         return $this->onfidoInstance?->verified_at;
     }
+
+    public function start($date = null): bool
+    {
+        return $this->onfidoInstance?->start($date) ?? false;
+    }
+
+    public function startNow(): bool
+    {
+        return $this->onfidoInstance?->startNow() ?? false;
+    }
+
+    public function verify(): bool
+    {
+        return $this->onfidoInstance?->verify() ?? false;
+    }
+
+    public function unverify(): bool
+    {
+        return $this->onfidoInstance?->unverify() ?? false;
+    }
+
+    public function reset(bool $hard = false): bool
+    {
+        return $this->onfidoInstance?->reset($hard) ?? false;
+    }
 }
