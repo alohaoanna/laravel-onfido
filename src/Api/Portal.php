@@ -26,7 +26,7 @@ class Portal
         $this->configuration = $configuration ?? Configuration::getDefaultConfiguration();
 
         $this->configuration->setApiToken(config('onfido.api.token'))
-            ->setRegion(config('onfido.api.region'));
+            ->setRegion(self::regionFromString(config('onfido.api.region', Region::EU)));
 
         $this->client = self::getDefaultClient();
 
@@ -162,5 +162,14 @@ class Portal
         }
 
         return null;
+    }
+
+    public static function regionFromString(string $key)
+    {
+        return match(strtoupper($key)) {
+            'CA' => Region::CA,
+            'US' => Region::US,
+            default => Region::EU,
+        };
     }
 }
