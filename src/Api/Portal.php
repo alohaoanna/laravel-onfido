@@ -164,9 +164,17 @@ class Portal
         return null;
     }
 
-    public static function regionFromString(string $key)
+    public static function regionFromString($value): Region
     {
-        return match(strtoupper($key)) {
+        if (is_string($value)) {
+            $value = strtoupper($value);
+        }
+
+        if ($value instanceof Region) {
+            return $value;
+        }
+
+        return match($value) {
             'CA' => Region::CA,
             'US' => Region::US,
             default => Region::EU,
